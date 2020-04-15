@@ -188,6 +188,7 @@ function CEPGP_IncAddonMsg(message, sender, sync)
 		end
 		local lane = "GUILD";
 		local target = sender;
+		CEPGP_print(sender .. " is importing settings from you");
 		local success, failMsg = pcall(function()
 			if args[1] == "?forceSync" then
 				target = "?forceSync";
@@ -232,6 +233,12 @@ function CEPGP_IncAddonMsg(message, sender, sync)
 					end
 				end
 				CEPGP_SendAddonMsg(target..";impresponse;LOOTGUIBUTTONTIMEOUT;"..CEPGP_response_time);
+				if CEPGP.Loot.HideKeyphrases then
+					CEPGP_SendAddonMsg(target..";impresponse;LOOTHIDEKEYPHRASES;true");
+				else
+					CEPGP_SendAddonMsg(target..";impresponse;LOOTHIDEKEYPHRASES;false");
+				end
+				CEPGP_SendAddonMsg(target..";impresponse;LootAnnounce;"..CEPGP.Loot.Announcement);
 				CEPGP_SendAddonMsg(target..";impresponse;Done;", lane);
 				
 				C_Timer.After(1, function()
@@ -316,15 +323,15 @@ function CEPGP_IncAddonMsg(message, sender, sync)
 									local temp = {};
 									for k, v in pairs(OVERRIDE_INDEX) do
 										temp[#temp+1] = {k, v};
-										--CEPGP_SendAddonMsg(target..";impresponse;OVERRIDE;"..k..";"..v, lane);
+										CEPGP_SendAddonMsg(target..";impresponse;OVERRIDE;"..k..";"..v, lane);
 									end
 									
-									local i = 1;
+									local i = 0;
 									C_Timer.NewTicker(0.01, function()
+										i = i + 1;
 										if #OVERRIDE_INDEX > 0 then
 											CEPGP_SendAddonMsg(target..";impresponse;OVERRIDE;"..temp[i][1]..";"..temp[i][2], lane);
 										end
-										i = i + 1;
 										
 										if i >= #temp then
 											CEPGP_SendAddonMsg(target..";impresponse;Done;", lane);
@@ -486,6 +493,10 @@ function CEPGP_IncAddonMsg(message, sender, sync)
 		
 		if option == "LOOTGUIBUTTONTIMEOUT" then
 			CEPGP_response_time = tonumber(args[4]);
+		end
+		
+		if option == "LOOTHIDEKEYPHRASES" then
+			CEPGP.Loot.HideKeyphrases = args[4] == "true";
 		end
 		
 		if option == "SLOTWEIGHTS" or option == "STANDBYRANKS" or option == "EPVALS" or option == "AUTOEP" or option == "OVERRIDE" or option == "STANDBYSHARE" or option == "altLinks" or option == "altSync" then
@@ -703,9 +714,13 @@ function CEPGP_IncAddonMsg(message, sender, sync)
 					CEPGP_PR_sort = false;
 					CEPGP.Loot.AutoSort = false;
 				end
-				
+			
+			elseif option == "LootAnnounce" then
+				CEPGP.Loot.Announcement = args[4];
+			
 			elseif option == "COMPLETE" then
 				CEPGP_print("Import complete");
+				CEPGP_Info.VerboseLogging = false;
 			end
 		end
 		

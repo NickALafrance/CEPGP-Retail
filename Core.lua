@@ -1,6 +1,6 @@
 --[[ Globals ]]--
 
-CEPGP_VERSION = "1.12.10.release"
+CEPGP_VERSION = "1.12.12.release"
 SLASH_CEPGP1 = "/CEPGP";
 SLASH_CEPGP2 = "/cep";
 CEPGP_VERSION_NOTIFIED = false;
@@ -139,9 +139,11 @@ CEPGP = {
 		AutoPass = CEPGP_auto_pass,
 		AutoSort = CEPGP_PR_sort,
 		Keyword = CEPGP_keyword,
+		HideKeyphrases = false,
 		MinThreshold = CEPGP_min_threshold,
 		MinReq = CEPGP_minEP,
 		RaidVisibility = CEPGP_raid_wide_dist,
+		RaidWarning = false,
 		ShowPass = CEPGP_show_passes,
 		SuppressResponses = CEPGP_suppress_announcements,
 		GUI = {
@@ -165,7 +167,7 @@ CEPGP = {
 }
 
 CEPGP_Info = {
-	Version = "1.12.10",
+	Version = "1.12.12",
 	Build = "Release",
 	NumExcluded = 0,
 	IgnoreUpdates = false,
@@ -706,7 +708,8 @@ function CEPGP_addStandbyEP(amount, boss, msg)
 					local name = CEPGP_standbyRoster[i][1];
 					local main = CEPGP_getMain(name);
 					local index = CEPGP_getIndex(name);
-
+					local online = select(9, GetGuildRosterInfo(index));
+					
 					if online or STANDBYOFFLINE then
 						local EP,GP = CEPGP_getEPGP(name, index);
 						

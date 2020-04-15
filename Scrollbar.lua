@@ -804,6 +804,7 @@ function CEPGP_UpdateAttendanceScrollBar()
 			index, class, rank, rankIndex, _, _, classFile = CEPGP_getGuildInfo(name);
 			if not index then
 				rank = "Non-Guild Member";
+				rankIndex = 11;
 			end
 			if standby then
 				standbyTable[sbCount] = {
@@ -881,9 +882,14 @@ function CEPGP_UpdateAttendanceScrollBar()
 			end
 		end
 	end
-
-	tempTable = CEPGP_tSort(tempTable, CEPGP_criteria);
-	standbyTable = CEPGP_tSort(standbyTable, CEPGP_criteria);
+	
+	if CEPGP_criteria == 4 then
+		tempTable = CEPGP_tSort(tempTable, 12);
+		standbyTable = CEPGP_tSort(standbyTable, 12);
+	else
+		tempTable = CEPGP_tSort(tempTable, CEPGP_criteria);
+		standbyTable = CEPGP_tSort(standbyTable, CEPGP_criteria);
+	end
 
 	local adjust = false;
 	if #standbyTable > 0 then
